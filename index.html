@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,39 +16,62 @@
 
         body {
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             font-family: Arial, sans-serif;
             background: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
         }
 
         .container {
-            max-width: 500px;
+            max-width: 600px;
             margin: auto;
+        }
+
+        .header {
             text-align: center;
+            padding: 15px 0 20px;
         }
 
-        h1 {
-            margin-top: 30px;
+        .header h1 {
+            margin: 0 0 8px;
         }
 
-        .card {
-            margin-top: 25px;
-            padding: 25px;
+        .username {
+            opacity: 0.7;
+        }
+
+        .video-card {
+            margin-bottom: 15px;
+            padding: 15px;
             border-radius: 15px;
             background: var(--tg-theme-secondary-bg-color, #f1f1f1);
         }
 
+        .video-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .video-info {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
         button {
             width: 100%;
-            padding: 15px;
-            margin-top: 20px;
+            margin-top: 12px;
+            padding: 13px;
             border: none;
             border-radius: 10px;
             background: var(--tg-theme-button-color, #2481cc);
             color: var(--tg-theme-button-text-color, #ffffff);
             font-size: 16px;
             font-weight: bold;
+        }
+
+        .section-title {
+            margin: 10px 0 15px;
         }
     </style>
 </head>
@@ -56,39 +80,116 @@
 
 <div class="container">
 
-    <h1>🎬 Video App</h1>
-
-    <div class="card">
-        <h2>Halo 👋</h2>
-
-        <p id="username">Memuat pengguna...</p>
-
-        <button onclick="watchVideo()">
-            ▶️ Tonton Video
-        </button>
+    <div class="header">
+        <h1>🎬 Video App</h1>
+        <div class="username" id="username">
+            Memuat pengguna...
+        </div>
     </div>
+
+    <h2 class="section-title">🔥 Video Terbaru</h2>
+
+    <div id="video-list"></div>
 
 </div>
 
 <script>
-    const tg = window.Telegram.WebApp;
 
-    tg.ready();
-    tg.expand();
+const tg = window.Telegram.WebApp;
 
-    const user = tg.initDataUnsafe.user;
+tg.ready();
+tg.expand();
 
-    if (user) {
-        document.getElementById("username").textContent =
-            user.first_name + " 👋";
-    } else {
-        document.getElementById("username").textContent =
-            "Pengguna Telegram";
+
+// ==========================
+// DATA PENGGUNA TELEGRAM
+// ==========================
+
+const user = tg.initDataUnsafe.user;
+
+if (user) {
+
+    document.getElementById("username").textContent =
+        "Halo, " + user.first_name + " 👋";
+
+} else {
+
+    document.getElementById("username").textContent =
+        "Pengguna Telegram";
+
+}
+
+
+// ==========================
+// DAFTAR VIDEO
+// ==========================
+
+const videos = [
+
+    {
+        title: "Video Pertama",
+        info: "Video terbaru",
+        url: "https://example.com"
+    },
+
+    {
+        title: "Video Kedua",
+        info: "Video terbaru",
+        url: "https://example.com"
+    },
+
+    {
+        title: "Video Ketiga",
+        info: "Video terbaru",
+        url: "https://example.com"
     }
 
-    function watchVideo() {
-        tg.showAlert("Fitur video akan kita tambahkan berikutnya 😎");
-    }
+];
+
+
+// ==========================
+// TAMPILKAN VIDEO
+// ==========================
+
+const videoList = document.getElementById("video-list");
+
+videos.forEach((video, index) => {
+
+    const card = document.createElement("div");
+
+    card.className = "video-card";
+
+    card.innerHTML = `
+        <div class="video-title">
+            ${video.title}
+        </div>
+
+        <div class="video-info">
+            ${video.info}
+        </div>
+
+        <button onclick="watchVideo(${index})">
+            ▶️ Tonton Video
+        </button>
+    `;
+
+    videoList.appendChild(card);
+
+});
+
+
+// ==========================
+// TOMBOL TONTON
+// ==========================
+
+function watchVideo(index) {
+
+    const video = videos[index];
+
+    tg.openLink(video.url);
+
+}
+
 </script>
 
 </body>
