@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Video App</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        .card {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 15px;
+            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 10px;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎬 Video App</h1>
+
+    <div class="card">
+        <h2>Halo 👋</h2>
+
+        <p id="username">Memuat pengguna...</p>
+
+        <button onclick="watchVideo()">
+            ▶️ Tonton Video
+        </button>
+    </div>
+
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    const user = tg.initDataUnsafe.user;
+
+    if (user) {
+        document.getElementById("username").textContent =
+            user.first_name + " 👋";
+    } else {
+        document.getElementById("username").textContent =
+            "Pengguna Telegram";
+    }
+
+    function watchVideo() {
+        tg.showAlert("Fitur video akan kita tambahkan berikutnya 😎");
+    }
+</script>
+
+</body>
+</html>
