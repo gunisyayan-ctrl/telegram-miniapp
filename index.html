@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Video App</title>
+    <title>Video</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -16,181 +15,128 @@
 
         body {
             margin: 0;
-            padding: 15px;
+            padding: 16px;
             font-family: Arial, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background: #111;
+            color: white;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
         }
 
-        .header {
-            text-align: center;
-            padding: 15px 0 20px;
-        }
-
-        .header h1 {
-            margin: 0 0 8px;
-        }
-
-        .username {
-            opacity: 0.7;
+        #videos {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
         .video-card {
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 15px;
-            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            background: #1c1c1c;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .video-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .video-info {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-
-        button {
+        video {
             width: 100%;
-            margin-top: 12px;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            font-size: 16px;
+            display: block;
+            background: black;
+        }
+
+        .title {
+            padding: 12px;
+            font-size: 17px;
             font-weight: bold;
         }
 
-        .section-title {
-            margin: 10px 0 15px;
+        .error {
+            color: #ff7777;
+            padding: 10px 0;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+    <h1>Video</h1>
 
-    <div class="header">
-        <h1>🎬 Video App</h1>
-        <div class="username" id="username">
-            Memuat pengguna...
-        </div>
+    <div id="videos">
+        Memuat video...
     </div>
 
-    <h2 class="section-title">🔥 Video Terbaru</h2>
+    <script>
+        const tg = window.Telegram.WebApp;
 
-    <div id="video-list"></div>
+        tg.ready();
+        tg.expand();
 
-</div>
+        async function loadVideos() {
 
-<script>
+            const container = document.getElementById("videos");
 
-const tg = window.Telegram.WebApp;
+            try {
 
-tg.ready();
-tg.expand();
+                const response = await fetch("videos.json");
 
+                if (!response.ok) {
+                    throw new Error("videos.json tidak ditemukan");
+                }
 
-// ==========================
-// DATA PENGGUNA TELEGRAM
-// ==========================
+                const videos = await response.json();
 
-const user = tg.initDataUnsafe.user;
+                container.innerHTML = "";
 
-if (user) {
+                if (!videos.length) {
+                    container.innerHTML = "<p>Belum ada video.</p>";
+                    return;
+                }
 
-    document.getElementById("username").textContent =
-        "Halo, " + user.first_name + " 👋";
+                videos.forEach(video => {
 
-} else {
+                    const card = document.createElement("div");
 
-    document.getElementById("username").textContent =
-        "Pengguna Telegram";
+                    card.className = "video-card";
 
-}
+                    card.innerHTML = `
+                        <video
+                            controls
+                            preload="metadata"
+                            src="${video.url}">
+                        </video>
 
+                        <div class="title">
+                            ${escapeHTML(video.judul)}
+                        </div>
+                    `;
 
-// ==========================
-// DAFTAR VIDEO
-// ==========================
+                    container.appendChild(card);
 
-const videos = [
+                });
 
-    {
-        title: "Video Pertama",
-        info: "Video terbaru",
-        url: "https://example.com"
-    },
+            } catch (error) {
 
-    {
-        title: "Video Kedua",
-        info: "Video terbaru",
-        url: "https://example.com"
-    },
+                container.innerHTML = `
+                    <div class="error">
+                        Gagal memuat video: ${error.message}
+                    </div>
+                `;
 
-    {
-        title: "Video Ketiga",
-        info: "Video terbaru",
-        url: "https://example.com"
-    }
+                console.error(error);
+            }
+        }
 
-];
+        function escapeHTML(text) {
 
+            const div = document.createElement("div");
 
-// ==========================
-// TAMPILKAN VIDEO
-// ==========================
+            div.textContent = text;
 
-const videoList = document.getElementById("video-list");
+            return div.innerHTML;
+        }
 
-videos.forEach((video, index) => {
-
-    const card = document.createElement("div");
-
-    card.className = "video-card";
-
-    card.innerHTML = `
-        <div class="video-title">
-            ${video.title}
-        </div>
-
-        <div class="video-info">
-            ${video.info}
-        </div>
-
-        <button onclick="watchVideo(${index})">
-            ▶️ Tonton Video
-        </button>
-    `;
-
-    videoList.appendChild(card);
-
-});
-
-
-// ==========================
-// TOMBOL TONTON
-// ==========================
-
-function watchVideo(index) {
-
-    const video = videos[index];
-
-    tg.openLink(video.url);
-
-}
-
-</script>
+        loadVideos();
+    </script>
 
 </body>
 </html>
