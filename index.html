@@ -104,7 +104,7 @@
 
             try {
 
-                const response = await fetch("videos.json");
+                const response = await fetch("videos.json?t=" + Date.now());
 
                 if (!response.ok) {
                     throw new Error("Gagal mengambil videos.json");
