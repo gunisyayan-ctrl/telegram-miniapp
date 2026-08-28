@@ -58,3 +58,24 @@ with open(file, "w", encoding="utf-8") as f:
 
 print("Video berhasil ditambahkan.")
 PY
+echo ""
+echo "Mengirim perubahan ke GitHub..."
+
+cd "$HOME/telegram-miniapp" || exit 1
+
+git add videos.json
+
+git commit -m "Tambah video baru"
+
+if git push origin main; then
+    echo ""
+    echo "================================"
+    echo " VIDEO BERHASIL DIPUBLISH"
+    echo "================================"
+else
+    echo ""
+    echo "================================"
+    echo " GAGAL PUSH KE GITHUB"
+    echo "================================"
+    exit 1
+fi
